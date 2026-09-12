@@ -5,37 +5,37 @@ description: 現在のブランチを指定したブランチの上に rebase �
 
 # Skill: git-rebase
 
-## 引数
+## Arguments
 
-`git-rebase <target>` の形で呼ばれる。`<target>` の解釈:
+Invoked as `git-rebase <target>`. Interpretation of `<target>`:
 
-- `main` のようなローカルブランチ名 → そのままローカルの `<target>` を rebase 先にする。
-- `origin/main` のようなリモート追跡ブランチ名 → fetch 済みである前提でそのまま使う。**このスキル自身は `git fetch` を実行しない**。ローカルの `origin/main` が古い可能性がある場合は、実行前にその旨をユーザーに一言警告する（自動 fetch はしない）。
+- A local branch name like `main` → rebase onto that local `<target>` as-is.
+- A remote-tracking branch name like `origin/main` → assumed already fetched; used as-is. **This skill never runs `git fetch` itself.** If the local `origin/main` may be stale, warn the user once before proceeding (no automatic fetch).
 
-`<target>` が省略された場合は何を rebase 先にするか確認する。
+If `<target>` is omitted, ask what to rebase onto.
 
-## 前提条件（実行前に必ず確認）
+## Preconditions (always check before running)
 
-- `git status` を実行し、作業ツリーに未コミット/未ステージの変更がないか確認する。
-- 変更がある場合は rebase を開始せず、ユーザーに commit か stash を促す（無断で stash/commit しない）。
+- Run `git status` and confirm there are no uncommitted/unstaged changes in the working tree.
+- If there are changes, do not start the rebase — ask the user to commit or stash (never stash/commit without asking).
 
-## 手順
+## Steps
 
-1. `git status` で作業ツリーがクリーンであることを確認する。
-2. `<target>` が `origin/...` のようなリモート追跡ブランチ名の場合、fetch はせず、ローカルの当該ref が古い可能性がある旨を実行前に一言警告する。
-3. `git rebase <target>` を実行する。
-4. 結果を判定する。
-   - 成功: `git log --oneline -5` で確認して報告し、終了。
-   - コンフリクト発生: git-resolve-conflicts を実行し、解決後に自動で `git rebase --continue` まで完了させる。
-5. rebase 完了後、`git status --short` で作業ツリーの最終状態を確認する。
+1. Run `git status` to confirm the working tree is clean.
+2. If `<target>` is a remote-tracking branch like `origin/...`, do not fetch — warn once beforehand that the local ref may be stale.
+3. Run `git rebase <target>`.
+4. Evaluate the result.
+   - Success: confirm with `git log --oneline -5`, report, and finish.
+   - Conflict: run git-resolve-conflicts, then continue through to `git rebase --continue` automatically once resolved.
+5. After the rebase completes, check the final working-tree state with `git status --short`.
 
-## 禁止事項
+## Rules (never violate)
 
-- `git rebase --abort` をユーザーの明示的指示なく実行すること。
-- rebase 対象ブランチが `main` や共有ブランチ本体である場合（＝自分が rebase される側になる操作）を無断で行うこと。このスキルは常に「現在のブランチを動かす」側であることを確認する。
-- 未 push のコミットが書き換わることについて警告を省略すること。
+- Running `git rebase --abort` without the user's explicit instruction.
+- Rebasing `main` or another shared branch itself (i.e., becoming the branch that gets rebased onto). This skill always confirms it is moving the *current* branch.
+- Skipping the warning that unpushed commits will be rewritten.
 
-## 出力
+## Output
 
-- rebase 前に「どのブランチをどこに乗せ替えるか」を一言明示する。
-- 完了後、コミットグラフの要約と、push が必要な場合は force push が必要になる旨を報告する。
+- Before rebasing, state in one line which branch is being moved onto which.
+- After completion, summarize the commit graph, and report if a force push will be needed to push.
