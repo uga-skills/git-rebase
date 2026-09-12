@@ -1,5 +1,6 @@
 ---
-description: 現在のブランチを指定したブランチの上に rebase する。競合時は git-resolve-conflicts に委譲する
+name: git-rebase
+description: 現在のブランチを指定したブランチの上に rebase する。競合時は git-resolve-conflicts に委譲する。ユーザーが「rebaseして」「mainの上に乗せ替えて」「最新のmainに追従したい」など、ブランチの再構成や rebase を求めている場合は必ずこのスキルを使う。
 ---
 
 # Skill: git-rebase
