@@ -21,11 +21,12 @@ description: 現在のブランチを指定したブランチの上に rebase �
 ## 手順
 
 1. `git status` で作業ツリーがクリーンであることを確認する。
-2. `git rebase <target>` を実行する。
-3. 結果を判定する。
+2. `<target>` が `origin/...` のようなリモート追跡ブランチ名の場合、fetch はせず、ローカルの当該ref が古い可能性がある旨を実行前に一言警告する。
+3. `git rebase <target>` を実行する。
+4. 結果を判定する。
    - 成功: `git log --oneline -5` で確認して報告し、終了。
    - コンフリクト発生: git-resolve-conflicts を実行し、解決後に自動で `git rebase --continue` まで完了させる。
-4. rebase 完了後、`git status --short` で作業ツリーの最終状態を確認する。
+5. rebase 完了後、`git status --short` で作業ツリーの最終状態を確認する。
 
 ## 禁止事項
 
