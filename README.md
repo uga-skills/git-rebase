@@ -1,3 +1,9 @@
+---
+トークン使用量推定値:
+  1回あたり: 867
+  エンコーディング: "cl100k_base"
+---
+
 # git-rebase
 
 Claude Code用のrebaseスキルです。
